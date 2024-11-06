@@ -12,7 +12,7 @@ visited = [[False] * m for _ in range(n)]
 def dfs(x, y):
     global result
 
-    visited[y][x] == True
+    visited[y][x] = True
 
     if x == m - 1 and y == n - 1:
         result = 1
