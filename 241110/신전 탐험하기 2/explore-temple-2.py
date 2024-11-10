@@ -1,25 +1,29 @@
-# 입력 처리
-n = int(input())  # 층 수
-treasure = [tuple(map(int, input().split())) for _ in range(n)]  # 각 층의 보물 개수 (l, m, r)
+# 각 층의 보물의 개수 정보를 입력받습니다.
+n = int(input())
+a = [[0] * 4 for _ in range(1005)]
+for i in range(1, n + 1):
+    a[i][1], a[i][2], a[i][3] = map(int, input().split())
 
-# DP 배열 초기화
-dp = [[0] * 3 for _ in range(n)]
-dp[0][0], dp[0][1], dp[0][2] = treasure[0]  # 1층의 보물 개수로 초기화
+# 동적 프로그래밍을 사용하여 최대 점수를 계산합니다.
+dp = [[[0 for _ in range(4)] for _ in range(4)] for _ in range(1005)]
+for j in range(1, 4):
+    dp[1][j][j] = a[1][j]
 
-# DP 진행
 for i in range(1, n):
-    l, m, r = treasure[i]
-    dp[i][0] = max(dp[i-1][1], dp[i-1][2]) + l  # 왼쪽 방
-    dp[i][1] = max(dp[i-1][0], dp[i-1][2]) + m  # 가운데 방
-    dp[i][2] = max(dp[i-1][0], dp[i-1][1]) + r  # 오른쪽 방
+    for j in range(1, 4):
+        for k in range(1, 4):
+            for l in range(1, 4):
+                if k == l:
+                    continue
+                dp[i + 1][j][l] = max(dp[i + 1][j][l], dp[i][j][k] + a[i + 1][l])
 
-# 마지막 층의 예외 처리
-# 1층에서 들어간 방과 다른 방들 중 최대값 선택
-max_treasure = 0
-for j in range(3):
-    for k in range(3):
-        if j != k:
-            max_treasure = max(max_treasure, dp[n-1][k])
+# 최종적으로 가능한 최대 점수를 계산합니다.
+ans = 0
+for j in range(1, 4):
+    for k in range(1, 4):
+        if j == k:
+            continue
+        ans = max(ans, dp[n][j][k])
 
-# 결과 출력
-print(max_treasure)
+# 계산된 최대 점수를 출력합니다.
+print(ans)
